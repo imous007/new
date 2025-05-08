@@ -6,7 +6,7 @@ error_reporting(0);
 ini_set('display_errors', 0);
 ini_set('max_execution_time', 5000);
 // Menggunakan password_hash dan password_verify untuk keamanan yang lebih baik
-$hashed_password = '$$2y$10$8V2wFp3NzDNEjcNmmmCn1eshIANCwU5Nn10S6SlmYktX5fFsruXMG';
+$hashed_password = '$2y$10$8V2wFp3NzDNEjcNmmmCn1eshIANCwU5Nn10S6SlmYktX5fFsruXMG';
 
 // Fungsi untuk menampilkan form login
 function admin_login() {
