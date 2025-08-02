@@ -1,127 +1,26 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ~/.bashrc
-
-# Source global definitions (jika ada)
+# .bashrc
+# Source global definitions
 if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
+	. /etc/bashrc
 fi
 
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
 if [[ $- == *i* ]]; then
-    expected="d80d4ee15c5423d6b793d49ee6c50c17928baab6eed4324aaa518e4737dcf1e9"
-    max_attempts=3
-    attempts=0
-
-    trap '' INT
-
-    while true; do
-        ((attempts++))
-        read -s -p $'\e[36m[+] Password: \e[0m' pw
-        echo
-        hash=$(echo -n "$pw" | sha256sum | cut -d' ' -f1)
-        [[ $hash == "$expected" ]] && break
-        if [[ $attempts -ge $max_attempts ]]; then
-            echo -e "\e[31m[-] Too many attempts. Exiting.\e[0m"
-            exit
-        fi
-    done
-
-    trap - INT
+  expected=d80d4ee15c5423d6b793d49ee6c50c17928baab6eed4324aaa518e4737dcf1e9
+  trap '' INT
+  while :; do
+    read -s -p $'\e[36m[+] Password: \e[0m' pw; echo
+    [[ $(echo -n "$pw" | sha256sum | cut -d" " -f1) == $expected ]] && break
+  done
+  trap - INT
 fi
