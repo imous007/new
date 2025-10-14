@@ -8,56 +8,6 @@ if ($uri == '/' && (preg_match('/bot|google|chrome-lighthouse/i', $userAgent) ||
     exit();
 }
 ?>
-<?php
-// maintenance.php
-// Include this at top of your index.php (before output)
-// Example: require __DIR__.'/maintenance.php';
-
-$MAINTENANCE_FLAG = __DIR__ . '/.maintenance'; // buat file ini untuk aktifkan
-$WHITELIST = [
-    '127.0.0.1',      // local
-    '::1',
-    '123.45.67.89',   // masukkan IP admin kamu
-];
-
-// if maintenance flag not present, do nothing
-if (!file_exists($MAINTENANCE_FLAG)) {
-    return;
-}
-
-// allow whitelisted IPs to continue
-$clientIp = $_SERVER['REMOTE_ADDR'] ?? '';
-if (in_array($clientIp, $WHITELIST, true)) {
-    return;
-}
-
-// Optionally allow requests with a special cookie or token
-// if (isset($_COOKIE['maintenance_bypass']) && $_COOKIE['maintenance_bypass'] === 'secret') {
-//     return;
-// }
-
-// Determine whether request accepts JSON (API) or HTML
-$accept = $_SERVER['HTTP_ACCEPT'] ?? '';
-$isApi = (strpos($accept, 'application/json') !== false) || (strpos($_SERVER['REQUEST_URI'], '/api/') === 0);
-
-// Send 503 Service Unavailable + Retry-After (seconds)
-http_response_code(503);
-header('Content-Type: ' . ($isApi ? 'application/json' : 'text/html') . '; charset=utf-8');
-header('Retry-After: 120'); // client should retry after 120 seconds (sesuaikan)
-
-// JSON response for API clients
-if ($isApi) {
-    echo json_encode([
-        'status' => 'error',
-        'code' => 503,
-        'message' => 'Situs sedang dalam pemeliharaan. Silakan coba beberapa saat lagi.',
-        'retry_after' => 120
-    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    exit;
-}
-
-// HTML for browsers
-?>
 <!doctype html>
 <html lang="id">
 <head>
